@@ -11,6 +11,8 @@ public class BaseNPC : MonoBehaviour
     public Animator animController; // 身上的动画组件
     protected bool isInCollider; // 玩家是否处在碰撞体范围内
     public bool isTalked; // 玩家是否已经和该NPC交谈过
+    [Header("设置前置NPC")]
+    public GameObject[] prenpcobjects;//在Inspector中设置若干个前置NPC的GameObject
 
     [Header("对话的总条数")]
     public int dialogCount = 0;
@@ -35,6 +37,21 @@ public class BaseNPC : MonoBehaviour
         optionInfo = GameManager.LoadOption(npcName+"_Options");
         dialogCount = dialogInfo.dialogs.Count; // 赋值对话的总数量
     }
+
+    //对话交互触发的额外条件
+    protected bool Preconditions()
+    {
+        for(int i = 0;i < prenpcobjects.Length; i++)
+        {
+           if (!prenpcobjects[i].GetComponent<PublicNPC>().GetState())
+            {
+               return false;
+            }
+        }
+   
+        return true;
+    }
+
 
     /// <summary>
     /// 调用后若干秒之后消失
