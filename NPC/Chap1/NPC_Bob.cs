@@ -51,6 +51,8 @@ public class NPC_Bob : BaseNPC, IPrompt // 既是NPC又具有提示（可交互�
                     GameManager.Instance.mCurrentScene.ShowPanelDialog(); // 显示对话面板
                     // 设置NPC动画为talk
                     animController.Play("talk");
+                    GetComponent<PublicNPC>().ifTalked = true;
+                    //给PublicNPC传输ifTalked的值
                 }
             }
         }

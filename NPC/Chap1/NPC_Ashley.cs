@@ -43,6 +43,8 @@ public class NPC_Ashley : BaseNPC, IPrompt // 既是NPC又具有提示（可交�
                     animController.Play("talk");
                     // 新增PanelBag中的子任务2
                     PanelBag.Instance.AddNewMission();
+                    GetComponent<PublicNPC>().ifTalked = true;
+                    //给PublicNPC传输ifTalked的值
                 }
             }
         }

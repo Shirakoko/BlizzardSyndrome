@@ -16,7 +16,7 @@ public class NPC_Alex : BaseNPC, IPrompt // 既是NPC又具有提示（可交互
     private int talkCount = 0;
     public int TalkCount{get{return talkCount;}set{talkCount=value;}}
     private bool isOpen;
-    // public bool IsOpen{get{return isOpen;}set{isOpen=value;}}
+    public bool IsOpen{get{return isOpen;}set{isOpen=value;}}
 
     protected override void Awake()
     {
@@ -45,7 +45,7 @@ public class NPC_Alex : BaseNPC, IPrompt // 既是NPC又具有提示（可交互
         {
             if(isInCollider&&talkCount==0) // 玩家在NPC碰撞体内才可交互
             {
-                if(isInInteraction==false && isTalked==false) // 当前NPC没处于交互状态，表示可以交互
+                if(isInInteraction==false && isTalked==false && Preconditions()) // 当前NPC没处于交互状态，并且达成前置条件时表示可以交互
                 {
                     // 隐藏提示
                     HidePrompt();
@@ -60,6 +60,8 @@ public class NPC_Alex : BaseNPC, IPrompt // 既是NPC又具有提示（可交互
                     animController.Play("talk");
                     // 新增PanelBag中的子任务3
                     PanelBag.Instance.AddNewMission();
+                    GetComponent<PublicNPC>().ifTalked = true;
+                    //给PublicNPC传输ifTalked的值
                 }
             }
             else if(isInCollider&&talkCount==2) // 已经偷到钥匙了
@@ -163,7 +165,7 @@ public class NPC_Alex : BaseNPC, IPrompt // 既是NPC又具有提示（可交互
 
     public void OnTriggerExit(Collider other)
     {
-        // Debug.Log("离开Alex碰撞体");
+        // Debug.Log(Time.time + "离开触发器的对象是：" + other.gameObject.name);
         HidePrompt();
         isInInteraction = false; // 视为交互结束
         currentOptionIndex = -1; currentWordIndex = -1; // 重置对话和选项索引
@@ -172,17 +174,15 @@ public class NPC_Alex : BaseNPC, IPrompt // 既是NPC又具有提示（可交互
         animController.Play("hit"); // 设置疯子发疯的动作
 
         // 播放从监狱逃出来的动画
-        if(isOpen==true && isMoved==false  && talkCount<4)
+        if(isOpen==true && isMoved == false  && talkCount<4)
         {
-            Debug.Log("播放从监狱里逃出来的动画");
             moveAnim.SetTrigger("Move");
             animController.Play("hit");
-            isMoved = true; isOpen = false; // 虽然监狱门是打开的，但是为了让这一段逻辑只执行一次，需要isOpen充当开关
+            isMoved = true;
         }
-        else if(talkCount==4 && isMoved==false)
+        else if(talkCount==4)
         {
             // 开启15秒之后消失的协程
-            Debug.Log("15秒后消失");
             StartCoroutine(DisappearAfterTime(15));
         }        
     }
